@@ -27,12 +27,18 @@ public class ExternalPlayerService extends Service implements View.OnTouchListen
     private final ExternalPlayerServiceBinder binder = new ExternalPlayerServiceBinder();
     private WindowManager windowManager;
     private PlayerView playerView;
+    private YouTubePlayerView player;
     private float dX, dY;
 
-    public static void bindService(Context context, ServiceConnection connection) {
+    public static void bind(Context context, ServiceConnection conn) {
         Intent intent = new Intent(context, ExternalPlayerService.class);
-        context.bindService(intent, connection, Context.BIND_AUTO_CREATE);
+        context.bindService(intent, conn, Context.BIND_AUTO_CREATE);
     }
+
+    public static void unbind(Context context, ServiceConnection conn) {
+        context.unbindService(conn);
+    }
+
 
     public static void startService(Context context) {
         Intent intent = new Intent(context, ExternalPlayerService.class);
@@ -78,7 +84,7 @@ public class ExternalPlayerService extends Service implements View.OnTouchListen
         windowManager = (WindowManager) getSystemService(Context.WINDOW_SERVICE);
         playerView = (PlayerView) LayoutInflater.from(this).inflate(R.layout.view_player, null);//new PlayerView(getApplicationContext());
         playerView.setOnTouchListener(this);
-        final YouTubePlayerView player = (YouTubePlayerView) playerView.findViewById(R.id.youtube_player_view);
+        player = (YouTubePlayerView) playerView.findViewById(R.id.youtube_player_view);
         player.initialize(new AbstractYouTubeListener() {
             @Override
             public void onReady() {
@@ -104,6 +110,7 @@ public class ExternalPlayerService extends Service implements View.OnTouchListen
     @Override
     public boolean onUnbind(Intent intent) {
         Logger.d();
+        player.release();
         return super.onUnbind(intent);
     }
 

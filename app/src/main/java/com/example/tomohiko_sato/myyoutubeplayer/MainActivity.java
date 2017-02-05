@@ -8,6 +8,18 @@ import android.support.v7.app.AppCompatActivity;
 
 public class MainActivity extends AppCompatActivity {
     private ExternalPlayerService service;
+    private final ServiceConnection conn = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder binder) {
+            Logger.d();
+            service = ((ExternalPlayerService.ExternalPlayerServiceBinder) binder).getService();
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            Logger.d();
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -19,16 +31,13 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         Logger.d();
-        ExternalPlayerService.bindService(this, new ServiceConnection() {
-            @Override
-            public void onServiceConnected(ComponentName name, IBinder binder) {
-                Logger.d();
-                service = ((ExternalPlayerService.ExternalPlayerServiceBinder) binder).getService();
-            }
+        ExternalPlayerService.bind(this, conn);
+    }
 
-            @Override
-            public void onServiceDisconnected(ComponentName name) {
-            }
-        });
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        ExternalPlayerService.unbind(this, conn);
     }
 }
