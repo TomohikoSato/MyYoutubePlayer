@@ -3,7 +3,6 @@ package com.example.tomohiko_sato.myyoutubeplayer;
 import android.content.Context;
 import android.graphics.Point;
 import android.util.AttributeSet;
-import android.util.DisplayMetrics;
 import android.view.Display;
 import android.view.MotionEvent;
 import android.view.WindowManager;
@@ -57,15 +56,9 @@ public class PlayerView extends FrameLayout {
             return;
         }
         WindowManager.LayoutParams lp = (WindowManager.LayoutParams) getLayoutParams();
-        lp.width = toPixel(200);
-        lp.height = toPixel(110);
+        lp.width = getResources().getDimensionPixelSize(R.dimen.player_float_width);
+        lp.height = getResources().getDimensionPixelSize(R.dimen.player_float_height);
         windowManager.updateViewLayout(this, lp);
-    }
-
-    private int toPixel(int dp) {
-        DisplayMetrics metrics = getContext().getResources().getDisplayMetrics();
-        float px = dp * ((float) metrics.densityDpi / DisplayMetrics.DENSITY_DEFAULT);
-        return (int) px;
     }
 
     private void fill() {
