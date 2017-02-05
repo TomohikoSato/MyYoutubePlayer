@@ -24,20 +24,14 @@ public class PlayerView extends FrameLayout {
     public PlayerView(Context context, AttributeSet attrs) {
         super(context, attrs);
         windowManager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
-        setOnTouchListener(new TouchEventTranslater(new TouchEventTranslater.OnMovedListener() {
-            @Override
-            public void onMoved(int dx, int dy) {
-                Logger.d("dx:%d, dy:%d", dx, dy);
-                if (currentState == State.FLOAT) {
-                    updateLayout(dx, dy);
-                }
+        setOnTouchListener(new TouchEventTranslater((dx, dy) -> {
+            Logger.d("dx:%d, dy:%d", dx, dy);
+            if (currentState == State.FLOAT) {
+                updateLayout(dx, dy);
             }
-        }, new TouchEventTranslater.OnClickedListener() {
-            @Override
-            public void onClicked() {
-                Logger.d();
-                currentState = currentState == State.EXPAND ? State.FLOAT : State.EXPAND;
-            }
+        }, () -> {
+            Logger.d();
+            currentState = currentState == State.EXPAND ? State.FLOAT : State.EXPAND;
         }));
     }
 

@@ -70,14 +70,10 @@ public class ExternalPlayerService extends Service {
 
 
         windowManager.addView(playerView, playerViewParams);
-
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                Logger.d("delay time has come. removeView");
-                windowManager.removeView(playerView);
-                stopSelf();
-            }
+        new Handler().postDelayed(() -> {
+            Logger.d("delay time has come. removeView");
+            windowManager.removeView(playerView);
+            stopSelf();
         }, 30 * 1000);
 
         return binder;
