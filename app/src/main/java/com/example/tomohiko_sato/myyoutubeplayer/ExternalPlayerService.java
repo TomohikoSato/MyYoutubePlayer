@@ -58,7 +58,7 @@ public class ExternalPlayerService extends Service {
         windowManager.addView(playerView, playerViewParams);
         new Handler().postDelayed(() -> {
             Logger.d("delay time has come. removeView");
-            windowManager.removeView(playerView);
+            //windowManager.removeView(playerView);
             stopSelf();
         }, 30 * 1000);
 
@@ -69,6 +69,8 @@ public class ExternalPlayerService extends Service {
     public boolean onUnbind(Intent intent) {
         Logger.d();
         playerView.release();
+        windowManager.removeView(playerView);
+        playerView = null;
         return super.onUnbind(intent);
     }
 

@@ -3,8 +3,8 @@ package com.example.tomohiko_sato.myyoutubeplayer;
 import android.content.Context;
 import android.graphics.Point;
 import android.util.AttributeSet;
-import android.view.Display;
 import android.view.MotionEvent;
+import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
 
@@ -42,7 +42,7 @@ public class PlayerView extends FrameLayout {
                 updateLayout(dx, dy);
             }
         }, () -> {
-            Logger.d();
+            Logger.d("clicked");
             setCurrentState(currentState == State.EXPAND ? State.FLOAT : State.EXPAND);
         }));
     }
@@ -65,6 +65,7 @@ public class PlayerView extends FrameLayout {
 
     private void setCurrentState(State state) {
         currentState = state;
+        Logger.d(currentState.toString());
         switch (currentState) {
             case FLOAT:
                 shrink();
@@ -85,6 +86,13 @@ public class PlayerView extends FrameLayout {
         lp.width = getResources().getDimensionPixelSize(R.dimen.player_float_width);
         lp.height = getResources().getDimensionPixelSize(R.dimen.player_float_height);
         windowManager.updateViewLayout(this, lp);
+
+        ViewGroup.LayoutParams vglp = player.getLayoutParams();
+        vglp.width = getResources().getDimensionPixelSize(R.dimen.player_float_width);
+        vglp.height = getResources().getDimensionPixelSize(R.dimen.player_float_height);
+        player.setLayoutParams(vglp);
+
+        player.invalidate();
     }
 
     private void fill() {
@@ -92,15 +100,22 @@ public class PlayerView extends FrameLayout {
             Logger.e();
             return;
         }
-        Display display = windowManager.getDefaultDisplay();
         Point size = new Point();
-        display.getSize(size);
+        windowManager.getDefaultDisplay().getSize(size);
+        Logger.d(size.toString());
         int screenWidth = size.x;
         int screenHeight = size.y;
         WindowManager.LayoutParams lp = (WindowManager.LayoutParams) getLayoutParams();
         lp.width = screenWidth;
         lp.height = screenHeight;
         windowManager.updateViewLayout(this, lp);
+
+        ViewGroup.LayoutParams vglp = player.getLayoutParams();
+        vglp.width = screenWidth;
+        vglp.height = screenHeight;
+        player.setLayoutParams(vglp);
+
+        player.invalidate();
     }
 
     @Override

@@ -7,12 +7,12 @@ import android.os.IBinder;
 import android.support.v7.app.AppCompatActivity;
 
 public class MainActivity extends AppCompatActivity {
-    private ExternalPlayerService service;
+
     private final ServiceConnection conn = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder binder) {
             Logger.d();
-            service = ((ExternalPlayerService.ExternalPlayerServiceBinder) binder).getService();
+
         }
 
         @Override
@@ -39,5 +39,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onPause() {
         super.onPause();
         ExternalPlayerService.unbind(this, conn);
+
     }
 }
