@@ -54,6 +54,8 @@ public class ExternalPlayerService extends Service {
     public IBinder onBind(Intent intent) {
         Logger.d(intent.toString());
         windowManager = (WindowManager) getSystemService(Context.WINDOW_SERVICE);
+
+        this.setTheme(R.style.AppTheme);
         playerView = (PlayerView) LayoutInflater.from(this).inflate(R.layout.view_player, null);
         windowManager.addView(playerView, playerViewParams);
         new Handler().postDelayed(() -> {

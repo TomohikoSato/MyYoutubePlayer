@@ -82,6 +82,8 @@ public class PlayerView extends FrameLayout {
             Logger.e();
             return;
         }
+        findViewById(R.id.for_expand).setVisibility(GONE);
+
         WindowManager.LayoutParams lp = (WindowManager.LayoutParams) getLayoutParams();
         lp.width = getResources().getDimensionPixelSize(R.dimen.player_float_width);
         lp.height = getResources().getDimensionPixelSize(R.dimen.player_float_height);
@@ -91,8 +93,7 @@ public class PlayerView extends FrameLayout {
         vglp.width = getResources().getDimensionPixelSize(R.dimen.player_float_width);
         vglp.height = getResources().getDimensionPixelSize(R.dimen.player_float_height);
         player.setLayoutParams(vglp);
-
-        player.invalidate();
+        invalidate();
     }
 
     private void fill() {
@@ -100,6 +101,8 @@ public class PlayerView extends FrameLayout {
             Logger.e();
             return;
         }
+        findViewById(R.id.for_expand).setVisibility(VISIBLE);
+
         Point size = new Point();
         windowManager.getDefaultDisplay().getSize(size);
         Logger.d(size.toString());
@@ -112,10 +115,9 @@ public class PlayerView extends FrameLayout {
 
         ViewGroup.LayoutParams vglp = player.getLayoutParams();
         vglp.width = screenWidth;
-        vglp.height = screenHeight;
+        vglp.height = 1000; //DEBUG:
         player.setLayoutParams(vglp);
-
-        player.invalidate();
+        invalidate();
     }
 
     @Override
