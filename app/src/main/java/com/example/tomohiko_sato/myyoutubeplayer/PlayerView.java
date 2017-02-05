@@ -15,24 +15,22 @@ import android.widget.FrameLayout;
  */
 public class PlayerView extends FrameLayout {
     private final WindowManager windowManager;
-    private final DragDetector dragDetector;
 
     public PlayerView(Context context, AttributeSet attrs) {
         super(context, attrs);
         windowManager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
-        dragDetector = new DragDetector(new DragDetector.OnMovedListener() {
+        setOnTouchListener(new TouchEventTranslater(new TouchEventTranslater.OnMovedListener() {
             @Override
             public void onMoved(int dx, int dy) {
                 Logger.d("dx:%d, dy:%d", dx, dy);
                 updateLayout(dx, dy);
             }
-        }, new DragDetector.OnClickedListener() {
+        }, new TouchEventTranslater.OnClickedListener() {
             @Override
             public void onClicked() {
                 Logger.d();
             }
-        });
-        setOnTouchListener(dragDetector);
+        }));
     }
 
     @Override
@@ -50,7 +48,10 @@ public class PlayerView extends FrameLayout {
         windowManager.updateViewLayout(this, lp);
     }
 
-    private static class DragDetector implements OnTouchListener {
+    /**
+     * タッチイベントを解釈し、{@link OnMovedListener}や{@link OnClickedListener} に伝える
+     */
+    private static class TouchEventTranslater implements OnTouchListener {
         private final OnMovedListener moved;
         private final OnClickedListener clicked;
 
@@ -59,36 +60,33 @@ public class PlayerView extends FrameLayout {
         private int oldX = 0;
         private int oldY = 0;
 
-        DragDetector(OnMovedListener moved, OnClickedListener clicked) {
+        TouchEventTranslater(OnMovedListener moved, OnClickedListener clicked) {
             this.moved = moved;
             this.clicked = clicked;
         }
 
         @Override
         public boolean onTouch(View v, MotionEvent event) {
-            Logger.d(event.toString());
             switch (event.getAction()) {
-                case MotionEvent.ACTION_DOWN: {
+                case MotionEvent.ACTION_DOWN:
                     downX = (int) event.getRawX();
                     downY = (int) event.getRawY();
                     oldX = downX;
                     oldY = downY;
                     break;
-                }
-                case MotionEvent.ACTION_UP: {
+                case MotionEvent.ACTION_UP:
                     int distance = (int) Math.sqrt(((event.getRawX() - downX) * (event.getRawX() - downX) + (event.getRawY() - downY) * (event.getRawY() - downY)));
                     if (distance < 30) {
                         clicked.onClicked();
                     }
                     break;
-                }
-                default: {
+                default:
                     int dx = (int) (event.getRawX() - oldX);
                     int dy = (int) (event.getRawY() - oldY);
                     oldX = (int) event.getRawX();
                     oldY = (int) event.getRawY();
                     moved.onMoved(dx, dy);
-                }
+                    break;
             }
 
             return false;
