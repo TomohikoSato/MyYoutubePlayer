@@ -35,7 +35,16 @@ public class Logger {
 
     public static void i(String str, Object... args) {
         StackTraceElement[] stackTrace = new Throwable().getStackTrace();
-        Log.d(trim(getCallerClassName(stackTrace)), String.format("%s: %s", getCallerMethodName(stackTrace), String.format(str, args)));
+        Log.i(trim(getCallerClassName(stackTrace)), String.format("%s: %s", getCallerMethodName(stackTrace), String.format(str, args)));
+    }
+
+    public static void e() {
+        e("");
+    }
+
+    public static void e(String str, Object... args) {
+        StackTraceElement[] stackTrace = new Throwable().getStackTrace();
+        Log.e(trim(getCallerClassName(stackTrace)), String.format("%s: %s", getCallerMethodName(stackTrace), String.format(str, args)));
     }
 
 

@@ -8,6 +8,9 @@ import android.view.MotionEvent;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
 
+import com.pierfrancescosoffritti.youtubeplayer.AbstractYouTubeListener;
+import com.pierfrancescosoffritti.youtubeplayer.YouTubePlayerView;
+
 /**
  * プレイヤー用のビュー。
  * ２つのモード持っている
@@ -16,8 +19,14 @@ import android.widget.FrameLayout;
  */
 public class PlayerView extends FrameLayout {
     private final WindowManager windowManager;
+    private State currentState;
+    private YouTubePlayerView player;
 
-    private State currentState = State.FLOAT;
+    @Override
+    public void onAttachedToWindow() {
+        super.onAttachedToWindow();
+        setCurrentState(State.FLOAT);
+    }
 
     enum State {
         FLOAT,
@@ -38,6 +47,22 @@ public class PlayerView extends FrameLayout {
         }));
     }
 
+    @Override
+    protected void onFinishInflate() {
+        super.onFinishInflate();
+        player = (YouTubePlayerView) findViewById(R.id.youtube_player_view);
+        player.initialize(new AbstractYouTubeListener() {
+            @Override
+            public void onReady() {
+                player.loadVideo("6JYIGclVQdw", 0);
+            }
+        }, true);
+    }
+
+    public void release() {
+        player.release();
+    }
+
     private void setCurrentState(State state) {
         currentState = state;
         switch (currentState) {
@@ -53,6 +78,7 @@ public class PlayerView extends FrameLayout {
 
     private void shrink() {
         if (!isAttachedToWindow()) {
+            Logger.e();
             return;
         }
         WindowManager.LayoutParams lp = (WindowManager.LayoutParams) getLayoutParams();
@@ -63,6 +89,7 @@ public class PlayerView extends FrameLayout {
 
     private void fill() {
         if (!isAttachedToWindow()) {
+            Logger.e();
             return;
         }
         Display display = windowManager.getDefaultDisplay();
@@ -90,5 +117,4 @@ public class PlayerView extends FrameLayout {
         lp.y += dy;
         windowManager.updateViewLayout(this, lp);
     }
-
 }

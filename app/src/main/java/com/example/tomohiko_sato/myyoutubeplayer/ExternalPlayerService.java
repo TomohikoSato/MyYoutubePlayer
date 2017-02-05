@@ -11,9 +11,6 @@ import android.os.IBinder;
 import android.view.LayoutInflater;
 import android.view.WindowManager;
 
-import com.pierfrancescosoffritti.youtubeplayer.AbstractYouTubeListener;
-import com.pierfrancescosoffritti.youtubeplayer.YouTubePlayerView;
-
 public class ExternalPlayerService extends Service {
     private final WindowManager.LayoutParams playerViewParams = new WindowManager.LayoutParams(
             WindowManager.LayoutParams.WRAP_CONTENT,
@@ -25,8 +22,6 @@ public class ExternalPlayerService extends Service {
     private final ExternalPlayerServiceBinder binder = new ExternalPlayerServiceBinder();
     private WindowManager windowManager;
     private PlayerView playerView;
-    private YouTubePlayerView player;
-
 
     public static void bind(Context context, ServiceConnection conn) {
         Intent intent = new Intent(context, ExternalPlayerService.class);
@@ -50,7 +45,7 @@ public class ExternalPlayerService extends Service {
     }
 
     public class ExternalPlayerServiceBinder extends Binder {
-        public ExternalPlayerService getService() {
+        ExternalPlayerService getService() {
             return ExternalPlayerService.this;
         }
     }
@@ -59,16 +54,7 @@ public class ExternalPlayerService extends Service {
     public IBinder onBind(Intent intent) {
         Logger.d(intent.toString());
         windowManager = (WindowManager) getSystemService(Context.WINDOW_SERVICE);
-        playerView = (PlayerView) LayoutInflater.from(this).inflate(R.layout.view_player, null);//new PlayerView(getApplicationContext());
-        player = (YouTubePlayerView) playerView.findViewById(R.id.youtube_player_view);
-        player.initialize(new AbstractYouTubeListener() {
-            @Override
-            public void onReady() {
-                player.loadVideo("6JYIGclVQdw", 0);
-            }
-        }, true);
-
-
+        playerView = (PlayerView) LayoutInflater.from(this).inflate(R.layout.view_player, null);
         windowManager.addView(playerView, playerViewParams);
         new Handler().postDelayed(() -> {
             Logger.d("delay time has come. removeView");
@@ -82,7 +68,7 @@ public class ExternalPlayerService extends Service {
     @Override
     public boolean onUnbind(Intent intent) {
         Logger.d();
-        player.release();
+        playerView.release();
         return super.onUnbind(intent);
     }
 
